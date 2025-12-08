@@ -31,13 +31,12 @@ public class DataSource {
     			LOGGER.error("Driver type is not correct in URL", cfg.getUrl());
     			throw new JDBCConnectionException("Driver type is not correct in URL " + cfg.getUrl() + ".");
     		}
-    		System.out.println("Working Directory: " + System.getProperty("user.dir"));
     		LOGGER.info("Sucessfully created dataSource and connection");
     
     }
     
     public synchronized static DataSource getInstance() throws JDBCConnectionException {
-    	
+    	LOGGER.info("getting instance");
         if (instance == null) {
             instance = new DataSource();
         }
@@ -45,7 +44,9 @@ public class DataSource {
     }
     
     public synchronized Connection getConnection() throws InterruptedException {
+    	LOGGER.info("getting connection");
     	if (isOcupied) {
+    		LOGGER.warn("connection is ocupied, waiting");
     		this.wait();
     	}
     	isOcupied = true;
@@ -53,6 +54,7 @@ public class DataSource {
     }
     
     public synchronized void closeConnection(Connection conn) {
+    	LOGGER.info("closing connection");
     	isOcupied = false;
     	this.notify();
     }

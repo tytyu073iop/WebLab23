@@ -4,9 +4,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dao.*;
 
 public class DaoAccounts extends Dao {
+	private static final Logger LOGGER = LogManager.getLogger();
+	String ReadAccountsqlRequest = "SELECT account_id, client_id, balance, is_active, created_at FROM accounts WHERE account_id= ?";
 	
 	public DaoAccounts() throws JDBCConnectionException {
 		super();
@@ -31,17 +36,19 @@ public class DaoAccounts extends Dao {
 	}
 	
 	public Account readAccount(int id) throws DAOException {
+		LOGGER.info("Getting account");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
-			String sqlRequest = "SELECT account_id, client_id, balance, is_active, created_at FROM accounts WHERE account_id= ?";
-			PreparedStatement statement = connection.prepareStatement(sqlRequest);
+			PreparedStatement statement = connection.prepareStatement(ReadAccountsqlRequest);
 			statement.setInt(1, id);
 			ResultSet resultSet = statement.executeQuery();
 			return parseResult(resultSet).getFirst();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -49,6 +56,7 @@ public class DaoAccounts extends Dao {
 	}
 	
 	public void deleteAccount(int id) throws DAOException {
+		LOGGER.info("Deleting account");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -57,8 +65,10 @@ public class DaoAccounts extends Dao {
 			statement.setInt(1, id);
 			statement.executeUpdate();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -66,6 +76,7 @@ public class DaoAccounts extends Dao {
 	}
 	
 	public void createAccount(Account account) throws DAOException {
+		LOGGER.info("Creating account");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -77,8 +88,10 @@ public class DaoAccounts extends Dao {
 			statement.setDate(4, account.created_at());
 			statement.executeUpdate();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -86,6 +99,7 @@ public class DaoAccounts extends Dao {
 	}
 	
 	public void updateAccount(Account account) throws DAOException {
+		LOGGER.info("Updating account");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -98,8 +112,10 @@ public class DaoAccounts extends Dao {
 			statement.setInt(5, account.account_id());
 			statement.executeUpdate();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -107,6 +123,7 @@ public class DaoAccounts extends Dao {
 	}
 	
 	public List<Account> getClientAccounts(int client_id) throws DAOException {
+		LOGGER.info("Getting client accounts");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -116,8 +133,10 @@ public class DaoAccounts extends Dao {
 			ResultSet resultSet = statement.executeQuery();
 			return parseResult(resultSet);
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);

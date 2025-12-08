@@ -4,9 +4,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dao.*;
 
 public class DaoCredit_cards extends Dao {
+	private static final Logger LOGGER = LogManager.getLogger();
+	
 	public DaoCredit_cards() throws JDBCConnectionException {
 		super();
 	}
@@ -30,6 +35,7 @@ public class DaoCredit_cards extends Dao {
 	}
 	
 	public Credit_card readCredit_card(int id) throws DAOException {
+		LOGGER.info("getting credit card");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -39,8 +45,10 @@ public class DaoCredit_cards extends Dao {
 			ResultSet resultSet = statement.executeQuery();
 			return parseResult(resultSet).getFirst();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -48,6 +56,7 @@ public class DaoCredit_cards extends Dao {
 	}
 	
 	public void deleteCredit_card(int id) throws DAOException {
+		LOGGER.info("deleting credit card");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -56,8 +65,10 @@ public class DaoCredit_cards extends Dao {
 			statement.setInt(1, id);
 			statement.executeUpdate();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -65,6 +76,7 @@ public class DaoCredit_cards extends Dao {
 	}
 	
 	public void createCredit_card(Credit_card credit_card) throws DAOException {
+		LOGGER.info("creating credit card");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -76,8 +88,10 @@ public class DaoCredit_cards extends Dao {
 			statement.setBoolean(4, credit_card.is_active());
 			statement.executeUpdate();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -85,6 +99,7 @@ public class DaoCredit_cards extends Dao {
 	}
 	
 	public void updateCredit_card(Credit_card credit_card) throws DAOException {
+		LOGGER.info("updating credit card");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -97,8 +112,10 @@ public class DaoCredit_cards extends Dao {
 			statement.setInt(5, credit_card.card_id());
 			statement.executeUpdate();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);

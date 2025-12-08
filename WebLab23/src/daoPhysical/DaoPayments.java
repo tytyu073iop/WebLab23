@@ -4,12 +4,15 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dao.DAOException;
 import dao.Dao;
 import dao.JDBCConnectionException;
 
 public class DaoPayments extends Dao {
-
+	private static final Logger LOGGER = LogManager.getLogger();
 	
 	public DaoPayments() throws JDBCConnectionException {
 		super();
@@ -35,6 +38,7 @@ public class DaoPayments extends Dao {
 	}
 	
 	public Payment readPayment(int id) throws DAOException {
+		LOGGER.info("reading payment");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -44,8 +48,10 @@ public class DaoPayments extends Dao {
 			ResultSet resultSet = statement.executeQuery();
 			return parseResult(resultSet).getFirst();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -53,6 +59,7 @@ public class DaoPayments extends Dao {
 	}
 	
 	public void deletePayment(int id) throws DAOException {
+		LOGGER.info("deleting payment");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -61,8 +68,10 @@ public class DaoPayments extends Dao {
 			statement.setInt(1, id);
 			statement.executeUpdate();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -70,6 +79,7 @@ public class DaoPayments extends Dao {
 	}
 	
 	public void createPayment(Payment payment) throws DAOException {
+		LOGGER.info("creating payment");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -82,8 +92,10 @@ public class DaoPayments extends Dao {
 			statement.setString(5, payment.status());
 			statement.executeUpdate();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -91,6 +103,7 @@ public class DaoPayments extends Dao {
 	}
 	
 	public void updatePayment(Payment payment) throws DAOException {
+		LOGGER.info("updating payment");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -103,8 +116,10 @@ public class DaoPayments extends Dao {
 			statement.setString(5, payment.status());
 			statement.executeUpdate();
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
@@ -112,6 +127,7 @@ public class DaoPayments extends Dao {
 	}
 	
 	public Double getClientPayments(int client_id, Date from, Date to) throws DAOException {
+		LOGGER.info("getting client payments sum");
 		Connection connection = null;
 		try {
 			connection = cnr.getConnection();
@@ -124,8 +140,10 @@ public class DaoPayments extends Dao {
 			resultSet.next();
 			return resultSet.getDouble(1);
 		} catch (SQLException e) {
+			LOGGER.error("Can't create statement", e);
 			throw new DAOException("Can't create statement", e);
 		} catch (InterruptedException e) {
+			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
 		} finally {
 			closeConnection(connection);
