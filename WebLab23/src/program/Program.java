@@ -7,23 +7,32 @@ import java.util.List;
 import java.util.Scanner;
 
 import dao.DAOException;
+import dao.JDBCConnectionException;
 import daoPhysical.*;
 
 public class Program {
 	private static Scanner scanner = new Scanner(System.in);
 	
 	public static String getAccounts(int client_id) {
-		DaoAccounts da = new DaoAccounts();
-		
+		DaoAccounts da;
 		try {
-			String result = da.getClientAccounts(client_id).toString();
-			if (result == "[]") {
-				return "Client missing or client does not have accounts";
+			da = new DaoAccounts();
+			
+			try {
+				String result = da.getClientAccounts(client_id).toString();
+				if (result == "[]") {
+					return "Client missing or client does not have accounts";
+				}
+				return result;
+			} catch (DAOException e) {
+				return e.getLocalizedMessage();
 			}
-			return result;
-		} catch (DAOException e) {
+		} catch (JDBCConnectionException e) {
+			// TODO Auto-generated catch block
 			return e.getLocalizedMessage();
 		}
+		
+		
 	}
 	
 	public static Date convertToSqlDate(String userInput) throws IllegalArgumentException {
@@ -43,49 +52,81 @@ public class Program {
     }
 	
 	public static String getPayments(Date from, Date to, int client_id) {
-		DaoPayments dp = new DaoPayments();
-		
+		DaoPayments dp;
 		try {
-			String result = dp.getClientPayments(client_id, from, to).toString();
-			if (result == "0.0") {
-				return "Client missing or client does not have payments for this range";
+			dp = new DaoPayments();
+			
+			try {
+				String result = dp.getClientPayments(client_id, from, to).toString();
+				if (result == "0.0") {
+					return "Client missing or client does not have payments for this range";
+				}
+				return result;
+			} catch (DAOException e) {
+				return e.getLocalizedMessage();
 			}
-			return result;
-		} catch (DAOException e) {
-			return e.getLocalizedMessage();
+		} catch (JDBCConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return "failed";
+		
 	}
 	
 	public static String getSum(int account_id) {
-		DaoAccounts da = new DaoAccounts();
-		
+		DaoAccounts da;
 		try {
-			return String.valueOf(da.readAccount(account_id).balance());
-		} catch (DAOException e) {
-			return e.getLocalizedMessage();
+			da = new DaoAccounts();
+			
+			try {
+				return String.valueOf(da.readAccount(account_id).balance());
+			} catch (DAOException e) {
+				return e.getLocalizedMessage();
+			}
+		} catch (JDBCConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return "failed";
+		
 	}
 	
 	public static String makePayment(Credit_card cc, int to_account_id, double amount) {
-		DaoCredit_cards dc = new DaoCredit_cards();
-		
+		DaoCredit_cards dc;
 		try {
-			dc.makePayment(cc, to_account_id, amount);
-			return "success";
-		} catch (DAOException e) {
-			return e.getLocalizedMessage();
+			dc = new DaoCredit_cards();
+			
+			try {
+				dc.makePayment(cc, to_account_id, amount);
+				return "success";
+			} catch (DAOException e) {
+				return e.getLocalizedMessage();
+			}
+		} catch (JDBCConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return "failed";
+		
 	}
 	
 	public static String deactivate(Credit_card cc) {
-		DaoCredit_cards dc = new DaoCredit_cards();
-		
+		DaoCredit_cards dc;
 		try {
-			dc.deactivateCard(cc);
-			return "deactivated";
-		} catch (DAOException e) {
-			return e.getLocalizedMessage();
+			dc = new DaoCredit_cards();
+			
+			try {
+				dc.deactivateCard(cc);
+				return "deactivated";
+			} catch (DAOException e) {
+				return e.getLocalizedMessage();
+			}
+		} catch (JDBCConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return "error";
+		
 	}
 
 	 public static void main(String[] args) {
@@ -166,22 +207,30 @@ public class Program {
 	    private static void getSumMenu() {
 	        System.out.println("\n--- Get Account Balance ---");
 	        int clientId = getIntInput("Enter client ID: ");
-	        DaoAccounts da = new DaoAccounts();
-	        List<Account> accounts;
+	        DaoAccounts da;
 			try {
-				accounts = da.getClientAccounts(clientId);
+				da = new DaoAccounts();
 				
-				System.out.println("Avaliable choices: ");
-		        for (Account account : accounts) {
-		            System.out.println("Account ID: " + account.account_id());
-		        }
-			} catch (DAOException e) {
-				System.out.println(e.getLocalizedMessage());
-				return;
+				List<Account> accounts;
+				try {
+					accounts = da.getClientAccounts(clientId);
+					
+					System.out.println("Avaliable choices: ");
+			        for (Account account : accounts) {
+			            System.out.println("Account ID: " + account.account_id());
+			        }
+				} catch (DAOException e) {
+					System.out.println(e.getLocalizedMessage());
+					return;
+				}
+		        int accountId = getIntInput("Enter account ID: ");
+		        String result = getSum(accountId);
+		        System.out.println("Account Balance: " + result);
+			} catch (JDBCConnectionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-	        int accountId = getIntInput("Enter account ID: ");
-	        String result = getSum(accountId);
-	        System.out.println("Account Balance: " + result);
+	        
 	    }
 	    
 	    private static void makePaymentMenu() {
@@ -190,20 +239,28 @@ public class Program {
 	        // Get credit card details
 	        int id = getIntInput("Enter credit card id: ");
 	        
-	        DaoCredit_cards dc = new DaoCredit_cards();
-	        Credit_card cc;
+	        DaoCredit_cards dc;
 			try {
-				cc = dc.readCredit_card(id);
+				dc = new DaoCredit_cards();
 				
-				int toAccountId = getIntInput("Enter destination account ID: ");
-		        double amount = getDoubleInput("Enter payment amount: ");
-		        
-		        String result = makePayment(cc, toAccountId, amount);
-		        System.out.println("Result: " + result);
-			} catch (DAOException e) {
-				System.out.println(e.getLocalizedMessage());
-				return;
+				Credit_card cc;
+				try {
+					cc = dc.readCredit_card(id);
+					
+					int toAccountId = getIntInput("Enter destination account ID: ");
+			        double amount = getDoubleInput("Enter payment amount: ");
+			        
+			        String result = makePayment(cc, toAccountId, amount);
+			        System.out.println("Result: " + result);
+				} catch (DAOException e) {
+					System.out.println(e.getLocalizedMessage());
+					return;
+				}
+			} catch (JDBCConnectionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+	        
 	        
 	    }
 	    
@@ -212,17 +269,26 @@ public class Program {
 	        
 	        int id = getIntInput("Enter credit card id: ");
 	        
-	        DaoCredit_cards dc = new DaoCredit_cards();
-	        Credit_card cc;
+	        DaoCredit_cards dc;
+	        
+	        
 			try {
-				cc = dc.readCredit_card(id);
-		        
-		        String result = deactivate(cc);
-		        System.out.println("Result: " + result);
-			} catch (DAOException e) {
-				System.out.println(e.getLocalizedMessage());
-				return;
+				dc = new DaoCredit_cards();
+				Credit_card cc;
+				try {
+					cc = dc.readCredit_card(id);
+			        
+			        String result = deactivate(cc);
+			        System.out.println("Result: " + result);
+				} catch (DAOException e) {
+					System.out.println(e.getLocalizedMessage());
+					return;
+				}
+			} catch (JDBCConnectionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+	        
 	    }
 	    
 	    // Utility methods for input validation

@@ -11,7 +11,7 @@ import dao.JDBCConnectionException;
 public class DaoPayments extends Dao {
 
 	
-	public DaoPayments() {
+	public DaoPayments() throws JDBCConnectionException {
 		super();
 	}
 	
@@ -35,49 +35,44 @@ public class DaoPayments extends Dao {
 	}
 	
 	public Payment readPayment(int id) throws DAOException {
+		Connection connection = null;
 		try {
-			Connection connection = cnr.getConnection();
+			connection = cnr.getConnection();
 			String sqlRequest = "SELECT payment_id, from_account_id, to_account_id, amount, payment_date, status FROM Payments WHERE Payment_id= ?";
 			PreparedStatement statement = connection.prepareStatement(sqlRequest);
 			statement.setInt(1, id);
 			ResultSet resultSet = statement.executeQuery();
 			return parseResult(resultSet).getFirst();
-		} catch (JDBCConnectionException e) {
-			throw new DAOException("Can't obtain user id: " + id, e);
 		} catch (SQLException e) {
 			throw new DAOException("Can't create statement", e);
+		} catch (InterruptedException e) {
+			throw new DAOException("Interupt", e);
 		} finally {
-			try {
-				cnr.close();
-			} catch (JDBCConnectionException e) {
-				throw new DAOException("Can't close connection", e);
-			}
+			closeConnection(connection);
 		}
 	}
 	
 	public void deletePayment(int id) throws DAOException {
+		Connection connection = null;
 		try {
-			Connection connection = cnr.getConnection();
+			connection = cnr.getConnection();
 			String sqlRequest = "DELETE FROM payments WHERE Payment_id= ?";
 			PreparedStatement statement = connection.prepareStatement(sqlRequest);
 			statement.setInt(1, id);
 			statement.executeUpdate();
-		} catch (JDBCConnectionException e) {
-			throw new DAOException("Can't obtain user id: " + id, e);
 		} catch (SQLException e) {
 			throw new DAOException("Can't create statement", e);
+		} catch (InterruptedException e) {
+			throw new DAOException("Interupt", e);
 		} finally {
-			try {
-				cnr.close();
-			} catch (JDBCConnectionException e) {
-				throw new DAOException("Can't close connection", e);
-			}
+			closeConnection(connection);
 		}
 	}
 	
 	public void createPayment(Payment payment) throws DAOException {
+		Connection connection = null;
 		try {
-			Connection connection = cnr.getConnection();
+			connection = cnr.getConnection();
 			String sqlRequest = "INSERT INTO Payments(from_account_id, to_account_id, amount, payment_date, status) VALUES (?, ?, ?, ?, ?)";
 			PreparedStatement statement = connection.prepareStatement(sqlRequest);
 			statement.setInt(1, payment.from_account_id());
@@ -86,22 +81,19 @@ public class DaoPayments extends Dao {
 			statement.setDate(4, payment.payment_date());
 			statement.setString(5, payment.status());
 			statement.executeUpdate();
-		} catch (JDBCConnectionException e) {
-			throw new DAOException("Can't connect ", e);
 		} catch (SQLException e) {
 			throw new DAOException("Can't create statement", e);
+		} catch (InterruptedException e) {
+			throw new DAOException("Interupt", e);
 		} finally {
-			try {
-				cnr.close();
-			} catch (JDBCConnectionException e) {
-				throw new DAOException("Can't close connection", e);
-			}
+			closeConnection(connection);
 		}
 	}
 	
 	public void updatePayment(Payment payment) throws DAOException {
+		Connection connection = null;
 		try {
-			Connection connection = cnr.getConnection();
+			connection = cnr.getConnection();
 			String sqlRequest = "UPDATE payments set from_account_id = ?, to_account_id = ?, amount = ?, payment_date = ?, status = ? WHERE Payment_id = ?";
 			PreparedStatement statement = connection.prepareStatement(sqlRequest);
 			statement.setInt(1, payment.from_account_id());
@@ -110,22 +102,19 @@ public class DaoPayments extends Dao {
 			statement.setDate(4, payment.payment_date());
 			statement.setString(5, payment.status());
 			statement.executeUpdate();
-		} catch (JDBCConnectionException e) {
-			throw new DAOException("Can't connect ", e);
 		} catch (SQLException e) {
 			throw new DAOException("Can't create statement", e);
+		} catch (InterruptedException e) {
+			throw new DAOException("Interupt", e);
 		} finally {
-			try {
-				cnr.close();
-			} catch (JDBCConnectionException e) {
-				throw new DAOException("Can't close connection", e);
-			}
+			closeConnection(connection);
 		}
 	}
 	
 	public Double getClientPayments(int client_id, Date from, Date to) throws DAOException {
+		Connection connection = null;
 		try {
-			Connection connection = cnr.getConnection();
+			connection = cnr.getConnection();
 			String sqlRequest = "SELECT sum(amount) FROM payments WHERE from_account_id IN (SELECT account_id FROM accounts WHERE client_id= ?) AND payment_date BETWEEN ? AND ?";
 			PreparedStatement statement = connection.prepareStatement(sqlRequest);
 			statement.setInt(1, client_id);
@@ -134,16 +123,12 @@ public class DaoPayments extends Dao {
 			ResultSet resultSet = statement.executeQuery();
 			resultSet.next();
 			return resultSet.getDouble(1);
-		} catch (JDBCConnectionException e) {
-			throw new DAOException("Can't connect ", e);
 		} catch (SQLException e) {
 			throw new DAOException("Can't create statement", e);
+		} catch (InterruptedException e) {
+			throw new DAOException("Interupt", e);
 		} finally {
-			try {
-				cnr.close();
-			} catch (JDBCConnectionException e) {
-				throw new DAOException("Can't close connection", e);
-			}
+			closeConnection(connection);
 		}
 	}
 

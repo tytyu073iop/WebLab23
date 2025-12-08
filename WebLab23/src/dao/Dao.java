@@ -1,13 +1,19 @@
 package dao;
 
+import java.sql.Connection;
+
 public class Dao {
-	protected JdbcConnector cnr;
+	protected DataSource cnr;
 	
-	public Dao() {
-		cnr = new JdbcConnector();
+	public Dao() throws JDBCConnectionException {
+		cnr = DataSource.getInstance();
 	}
 	
-	public JdbcConnector getJdbcConnector() {
-		return cnr;
+	public Connection getJdbcConnector() throws InterruptedException {
+		return cnr.getConnection();
+	}
+	
+	public void closeConnection(Connection conn) {
+		cnr.closeConnection(conn);
 	}
 }
