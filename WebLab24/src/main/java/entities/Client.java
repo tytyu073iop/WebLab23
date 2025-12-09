@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "clients")
 public class Client {
     
     @Id
@@ -64,17 +63,6 @@ public class Client {
     
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
-    }
-    
-    // Методы для работы с коллекциями
-    public void addAccount(Account account) {
-        accounts.add(account);
-        account.setClient(this);
-    }
-    
-    public void removeAccount(Account account) {
-        accounts.remove(account);
-        account.setClient(null);
     }
     
     @Override

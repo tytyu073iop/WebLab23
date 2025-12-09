@@ -3,6 +3,20 @@
   <groupId>by.bsu.biryuk</groupId>
   <artifactId>WebLab24</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  
+  <dependencyManagement>
+    <dependencies>
+      <!-- Import the Log4j BOM to control all Log4j versions -->
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-bom</artifactId>
+        <version>2.25.2</version>
+        <type>pom</type>
+        <scope>import</scope> <!-- Critical: imports all versions from the BOM -->
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
   <dependencies>
   		   <dependency>
   		<groupId>com.mysql</groupId>
@@ -13,8 +27,50 @@
   	<dependency>
     <groupId>org.eclipse.persistence</groupId>
     <artifactId>eclipselink</artifactId>
-    <version>5.0.0-B01</version>
+    <version>5.0.0-B11</version>
 </dependency>
 
+<dependency>
+    <groupId>org.eclipse.persistence</groupId>
+    <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
+    <version>5.0.0-B11</version>
+    <scope>provided</scope>
+</dependency>
+
+<!-- Logging implementation (Log4j Core) -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+
+    <!-- Log4j JSON-encoding support -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-layout-template-json</artifactId>
+    </dependency>
+
   </dependencies>
+  
+  <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version>
+            <configuration>
+                <annotationProcessorPaths>
+                    <annotationProcessorPath>
+                        <groupId>org.eclipse.persistence</groupId>
+                        <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
+                        <version>5.0.0-B11</version>
+                    </annotationProcessorPath>
+                </annotationProcessorPaths>
+                <compilerArgs>
+                    <arg>-proc:full</arg>
+                </compilerArgs>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+  
 </project>
