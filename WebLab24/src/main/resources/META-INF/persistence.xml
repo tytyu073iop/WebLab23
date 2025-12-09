@@ -10,15 +10,17 @@
 		<provider>
 			org.eclipse.persistence.jpa.PersistenceProvider
 		</provider>
-    		<class>entities.Client</class> <!-- ADDDDDDDD!!!!-->
-    		<class>entities.Account</class> <!-- ADDDDDDDD!!!!-->
+    		<class>entities.Client</class>
+    		<class>entities.Account</class> 
+    		<class>entities.CreditCard</class> 
+    		<class>entities.Payment</class> 
 		   <exclude-unlisted-classes/>
     		<properties>
     		<property name="jakarta.persistence.jdbc.url" 
-				     value="jdbc:mysql://localhost:3306/JavaWebLab3?characterEncoding=utf8&amp;serverTimezone=UTC"/>
+				     value="jdbc:mysql://localhost:3306/JavaWebLab4?characterEncoding=utf8&amp;serverTimezone=UTC"/>
 			<property name="jakarta.persistence.jdbc.user" value="root"/>
       		
-			<property name="jakarta.persistence.jdbc.password" value="***"/>
+			<property name="jakarta.persistence.jdbc.password" value="Retsuk00"/>
 		
 			 
 		

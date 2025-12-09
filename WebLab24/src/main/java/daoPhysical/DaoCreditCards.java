@@ -1,8 +1,6 @@
 package daoPhysical;
 
 import java.math.BigDecimal;
-import java.time.ZoneId;
-import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
