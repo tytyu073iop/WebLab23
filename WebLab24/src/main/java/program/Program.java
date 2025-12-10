@@ -1,6 +1,6 @@
 package program;
 
-import java.sql.Date;
+import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -17,6 +17,7 @@ public class Program {
 	private static void createDemoData() {
 		try {
 			DaoClients dc = new DaoClients();
+			
 		} catch (JDBCConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,6 +75,8 @@ public class Program {
 				return result;
 			} catch (DAOException e) {
 				return e.getLocalizedMessage();
+			} catch (NullPointerException e) {
+				return "0.0";
 			}
 		} catch (JDBCConnectionException e) {
 			// TODO Auto-generated catch block

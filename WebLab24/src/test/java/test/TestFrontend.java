@@ -2,7 +2,7 @@ package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.sql.Date;
+import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ class TestFrontend {
 	void testGetAccounts() {
 		String correctResult = "[Account[account_id=1, client_id=1, balance=15000.0, is_active=true, created_at=2025-10-26], Account[account_id=2, client_id=1, balance=5000.0, is_active=true, created_at=2025-10-26]]";
 		
-		assertEquals(Program.getAccounts(1), correctResult);
+		assertEquals(correctResult, Program.getAccounts(1));
 	}
 	
 	@Test
@@ -38,7 +38,7 @@ class TestFrontend {
 		Date from = Program.convertToSqlDate("2025-10-01");
 		Date to = Program.convertToSqlDate("2025-11-01");
 		
-		assertEquals(Program.getPayments(from, to, 1), "3500.0");
+		assertEquals("3500.0", Program.getPayments(from, to, 1));
 	}
 	
 	@Test void getNoPayments() {
@@ -46,11 +46,11 @@ class TestFrontend {
 		Date to = Program.convertToSqlDate("2025-11-01");
 		String message = "Client missing or client does not have payments for this range";
 		
-		assertEquals(Program.getPayments(from, to, 10), message);
+		assertEquals(message, Program.getPayments(from, to, 10));
 	}
 	
 	@Test void getSum() {
-		assertEquals(Program.getSum(1), "15000.0");
+		assertEquals("15000.0", Program.getSum(1));
 	}
 	
 	/*@Disabled

@@ -34,6 +34,8 @@ public class DaoAccounts extends Dao {
 		} catch (InterruptedException e) {
 			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
+		} catch (NoResultException e)  {
+			throw new DAOException("No results", e);
 		} finally {
 			closeConnection(em);
 		}
