@@ -50,7 +50,10 @@ public class DaoAccounts extends Dao {
 			CriteriaDelete<Account> cq = cb.createCriteriaDelete(Account.class);
 			Root<Account> account = cq.from(Account.class);
 			cq.where(cb.equal(account.get(Account_.accountId), id));
+			EntityTransaction tx = em.getTransaction();
+			tx.begin();
 			assert em.createQuery(cq).executeUpdate() == 1 : "deleted more than 1 object";
+			tx.commit();
 		} catch (InterruptedException e) {
 			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
@@ -64,7 +67,10 @@ public class DaoAccounts extends Dao {
 		EntityManager em = null;
 		try {
 			em = cnr.getEntityManager();
+			EntityTransaction tx = em.getTransaction();
+			tx.begin();
 			em.persist(account);
+			tx.commit();
 		} catch (InterruptedException e) {
 			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
@@ -78,7 +84,10 @@ public class DaoAccounts extends Dao {
 		EntityManager em = null;
 		try {
 			em = cnr.getEntityManager();
+			EntityTransaction tx = em.getTransaction();
+			tx.begin();
 			em.merge(account);
+			tx.commit();
 		} catch (InterruptedException e) {
 			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);

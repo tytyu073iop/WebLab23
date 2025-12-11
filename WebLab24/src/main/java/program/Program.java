@@ -3,8 +3,10 @@ package program;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Scanner;
+import java.math.BigDecimal;
 
 import dao.DAOException;
 import dao.JDBCConnectionException;
@@ -17,8 +19,46 @@ public class Program {
 	private static void createDemoData() {
 		try {
 			DaoClients dc = new DaoClients();
+			Client client1 = new Client("Иванов Иван Иванович");
+			Client client2 = new Client("Петрова Мария Сергеевна");
+			Client client3 = new Client("Сидоров Алексей Петрович");
+			dc.createClient(client1);
+			dc.createClient(client2);
+			dc.createClient(client3);
 			
+			DaoAccounts da = new DaoAccounts();
+			Account account1 = new Account(client1, BigDecimal.valueOf(15000));
+			Account account2 = new Account(client1, BigDecimal.valueOf(5000));
+			Account account3 = new Account(client2, BigDecimal.valueOf(30000.50));
+			Account account4 = new Account(client3, BigDecimal.valueOf(12000));
+			da.createAccount(account1);
+			da.createAccount(account2);
+			da.createAccount(account3);
+			da.createAccount(account4);
+			
+			DaoCreditCards dcc = new DaoCreditCards();
+			CreditCard creditCard1 = new CreditCard(account1, "4111111111111111", convertToSqlDate("2025-12-31").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+			CreditCard creditCard2 = new CreditCard(account2, "4222222222222222", convertToSqlDate("2024-10-31").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+			CreditCard creditCard3 = new CreditCard(account3, "4333333333333333", convertToSqlDate("2026-05-31").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+			CreditCard creditCard4 = new CreditCard(account4, "4444444444444444", convertToSqlDate("2025-03-31").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+			
+			dcc.createCreditCard(creditCard1);
+			dcc.createCreditCard(creditCard2);
+			dcc.createCreditCard(creditCard3);
+			dcc.createCreditCard(creditCard4);
+			
+			DaoPayments dp = new DaoPayments();
+			Payment payment1 = new Payment(account1, account3, BigDecimal.valueOf(2500));
+			Payment payment2 = new Payment(account2, account4, BigDecimal.valueOf(1000));
+			Payment payment3 = new Payment(account3, account1, BigDecimal.valueOf(500));
+			
+			dp.createPayment(payment1);
+			dp.createPayment(payment2);
+			dp.createPayment(payment3);
 		} catch (JDBCConnectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DAOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -168,6 +208,9 @@ public class Program {
 	                case 6:
 	                    System.out.println("Thank you for using Banking System. Goodbye!");
 	                    return;
+	                case 7:
+	                    createDemoData();
+	                    break;
 	                default:
 	                    System.out.println("Invalid choice. Please try again.");
 	            }
@@ -183,6 +226,7 @@ public class Program {
 	        System.out.println("4. Make Payment");
 	        System.out.println("5. Deactivate Credit Card");
 	        System.out.println("6. Exit");
+	        System.out.println("7. Create demo data(use only once per db)");
 	    }
 	    
 	    private static void getAccountsMenu() {

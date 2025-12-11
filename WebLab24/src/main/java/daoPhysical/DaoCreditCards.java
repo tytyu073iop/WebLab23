@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import dao.*;
 import entities.*;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaDelete;
@@ -50,7 +51,10 @@ public class DaoCreditCards extends Dao {
 			CriteriaDelete<CreditCard> cq = cb.createCriteriaDelete(CreditCard.class);
 			Root<CreditCard> creditCard = cq.from(CreditCard.class);
 			cq.where(cb.equal(creditCard.get(CreditCard_.cardId), id));
+			EntityTransaction tx = em.getTransaction();
+			tx.begin();
 			assert em.createQuery(cq).executeUpdate() == 1 : "deleted more than 1 object";
+			tx.commit();
 		} catch (InterruptedException e) {
 			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
@@ -64,7 +68,10 @@ public class DaoCreditCards extends Dao {
 		EntityManager em = null;
 		try {
 			em = cnr.getEntityManager();
+			EntityTransaction tx = em.getTransaction();
+			tx.begin();
 			em.persist(creditCard);
+			tx.commit();
 		} catch (InterruptedException e) {
 			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
@@ -78,7 +85,10 @@ public class DaoCreditCards extends Dao {
 		EntityManager em = null;
 		try {
 			em = cnr.getEntityManager();
+			EntityTransaction tx = em.getTransaction();
+			tx.begin();
 			em.merge(creditCard);
+			tx.commit();
 		} catch (InterruptedException e) {
 			LOGGER.error("Interupt", e);
 			throw new DAOException("Interupt", e);
